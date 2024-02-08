@@ -1,0 +1,15 @@
+{
+    "$schema": "https://raw.githubusercontent.com/infection/infection/0.27.8/resources/schema.json",
+    "source": {
+        "directories": [
+            "src"
+        ]
+    },
+    "mutators": {
+        "@default": true
+    },
+    "timeout": 10,
+    "logs": {
+        "html": "./var/mutation-report.html"
+    }
+}
