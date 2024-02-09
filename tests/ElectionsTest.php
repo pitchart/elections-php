@@ -3,9 +3,9 @@
 namespace Tests\Elections\ElectionKata;
 
 use ApprovalTests\Approvals;
-use Elections\ElectionKata\Elections;
+use Elections\ElectionKata\ElectionsWithDistrict;
+use Elections\ElectionKata\ElectionsWithoutDistrict;
 use PHPUnit\Framework\TestCase;
-use function PHPUnit\Framework\assertTrue;
 
 class ElectionsTest extends TestCase
 {
@@ -32,7 +32,7 @@ class ElectionsTest extends TestCase
 
     public function test_elections_without_district(): void
     {
-        $election = new Elections($this->list, false);
+        $election = new ElectionsWithoutDistrict($this->list);
         $election->addCandidate(self::MICHEL);
         $election->addCandidate(self::JERRY);
         $election->addCandidate(self::JOHNNY);
@@ -51,7 +51,7 @@ class ElectionsTest extends TestCase
 
     public function test_elections_with_district(): void
     {
-        $election = new Elections($this->list, true);
+        $election = new ElectionsWithDistrict($this->list);
         $election->addCandidate(self::MICHEL);
         $election->addCandidate(self::JERRY);
         $election->addCandidate(self::JOHNNY);
