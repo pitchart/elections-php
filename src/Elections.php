@@ -22,6 +22,7 @@ class Elections implements ElectionsInterface
      */
     public function __construct(array $list, bool $withDistrict)
     {
+        $this->electionsWithoutDistrict = new ElectionsWithoutDistrict($list);
         $this->list = $list;
         $this->withDistrict = $withDistrict;
 
@@ -35,6 +36,7 @@ class Elections implements ElectionsInterface
         if ($this->withDistrict) {
             $this->addCandidateWithDistrict($candidate);
         } else {
+            $this->electionsWithoutDistrict->addCandidate($candidate);
             $this->addCandidateWithoutDistrict($candidate);
         }
     }
@@ -44,6 +46,7 @@ class Elections implements ElectionsInterface
         if ($this->withDistrict) {
             $this->voteForWithDistrict($electorDistrict, $candidate);
         } else {
+            $this->electionsWithoutDistrict->voteFor($elector, $candidate, $electorDistrict);
             $this->voteForWithoutDistrict($candidate);
         }
     }
@@ -53,6 +56,7 @@ class Elections implements ElectionsInterface
         if ($this->withDistrict) {
             return $this->resultsWithDistrict();
         }
+        $this->electionsWithoutDistrict->results();
         return $this->resultsWithoutDistrict();
     }
 
@@ -60,7 +64,7 @@ class Elections implements ElectionsInterface
      * @param string $candidate
      * @return void
      */
-    public function voteForWithoutDistrict(string $candidate): void
+    private function voteForWithoutDistrict(string $candidate): void
     {
         if (in_array($candidate, $this->candidates)) {
             $index = array_search($candidate, $this->candidates);
@@ -76,7 +80,7 @@ class Elections implements ElectionsInterface
      * @param string $candidate
      * @return void
      */
-    public function voteForWithDistrict(string $electorDistrict, string $candidate): void
+    private function voteForWithDistrict(string $electorDistrict, string $candidate): void
     {
         if (array_key_exists($electorDistrict, $this->votesWithDistricts)) {
             $districtVotes = $this->votesWithDistricts[$electorDistrict];
@@ -98,7 +102,7 @@ class Elections implements ElectionsInterface
     /**
      * @return array
      */
-    public function resultsWithoutDistrict(): array
+    private function resultsWithoutDistrict(): array
     {
         $results = [];
         $nullVotes = 0;
@@ -136,7 +140,7 @@ class Elections implements ElectionsInterface
     /**
      * @return array
      */
-    public function resultsWithDistrict(): array
+    private function resultsWithDistrict(): array
     {
         $results = [];
         $nbVotes = 0;
@@ -201,7 +205,7 @@ class Elections implements ElectionsInterface
      * @param string $candidate
      * @return void
      */
-    public function addCandidateWithDistrict(string $candidate): void
+    private function addCandidateWithDistrict(string $candidate): void
     {
         $this->officialCandidates[] = $candidate;
         $this->candidates[] = $candidate;
@@ -214,7 +218,7 @@ class Elections implements ElectionsInterface
      * @param string $candidate
      * @return void
      */
-    public function addCandidateWithoutDistrict(string $candidate): void
+    private function addCandidateWithoutDistrict(string $candidate): void
     {
         $this->officialCandidates[] = $candidate;
         $this->candidates[] = $candidate;
