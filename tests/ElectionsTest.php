@@ -51,7 +51,21 @@ class ElectionsTest extends TestCase
 
     public function test_elections_with_district(): void
     {
-        assertTrue(true);
-    }
+        $election = new Elections($this->list, true);
+        $election->addCandidate(self::MICHEL);
+        $election->addCandidate(self::JERRY);
+        $election->addCandidate(self::JOHNNY);
+
+        $election->voteFor(self::BOB, self::JERRY, self::DISTRICT_1);
+        $election->voteFor(self::JERRY, self::JERRY, self::DISTRICT_2);
+        $election->voteFor(self::ANNA, self::JOHNNY, self::DISTRICT_1);
+        $election->voteFor(self::JOHNNY, self::JOHNNY, self::DISTRICT_3);
+        $election->voteFor(self::MATT, self::DONALD, self::DISTRICT_3);
+        $election->voteFor(self::JESS, self::JOE, self::DISTRICT_1);
+        $election->voteFor(self::JULY, self::JERRY, self::DISTRICT_1);
+        $election->voteFor(self::SIMON, "", self::DISTRICT_2);
+        $election->voteFor(self::CAROLE, "", self::DISTRICT_3);
+
+        Approvals::verifyList($election->results());    }
 
 }

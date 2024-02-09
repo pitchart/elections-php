@@ -1,0 +1,6 @@
+[Michel] -> 0,00%
+[Jerry] -> 66,67%
+[Johnny] -> 33,33%
+[Blank] -> 22,22%
+[Null] -> 22,22%
+[Abstention] -> 0,00%
