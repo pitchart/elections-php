@@ -2,7 +2,7 @@
 
 namespace Elections\ElectionKata;
 
-class Elections
+class Elections implements ElectionsInterface
 {
     /** @var string[] */
     private array $candidates = [];
@@ -101,7 +101,6 @@ class Elections
     public function resultsWithoutDistrict(): array
     {
         $results = [];
-        $nbVotes = 0;
         $nullVotes = 0;
         $blankVotes = 0;
         $nbValidVotes = 0;
