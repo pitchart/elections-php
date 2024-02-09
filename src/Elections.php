@@ -8,8 +8,6 @@ class Elections implements ElectionsInterface
     private array $candidates = [];
     /** @var string[] */
     private array $officialCandidates = [];
-    /** @var int[] */
-    private array $votesWithoutDistricts = [];
     /** @var array<string, int[]> */
     private array $votesWithDistricts = [];
     /** @var array<string, string[]> */
@@ -37,7 +35,7 @@ class Elections implements ElectionsInterface
             $this->addCandidateWithDistrict($candidate);
         } else {
             $this->electionsWithoutDistrict->addCandidate($candidate);
-            $this->addCandidateWithoutDistrict($candidate);
+
         }
     }
 
@@ -47,7 +45,7 @@ class Elections implements ElectionsInterface
             $this->voteForWithDistrict($electorDistrict, $candidate);
         } else {
             $this->electionsWithoutDistrict->voteFor($elector, $candidate, $electorDistrict);
-            $this->voteForWithoutDistrict($candidate);
+
         }
     }
 
@@ -56,23 +54,7 @@ class Elections implements ElectionsInterface
         if ($this->withDistrict) {
             return $this->resultsWithDistrict();
         }
-        $this->electionsWithoutDistrict->results();
-        return $this->resultsWithoutDistrict();
-    }
-
-    /**
-     * @param string $candidate
-     * @return void
-     */
-    private function voteForWithoutDistrict(string $candidate): void
-    {
-        if (in_array($candidate, $this->candidates)) {
-            $index = array_search($candidate, $this->candidates);
-            $this->votesWithoutDistricts[$index] = $this->votesWithoutDistricts[$index] + 1;
-        } else {
-            $this->candidates[] = $candidate;
-            $this->votesWithoutDistricts[] = 1;
-        }
+        return $this->electionsWithoutDistrict->results();
     }
 
     /**
@@ -97,44 +79,6 @@ class Elections implements ElectionsInterface
             }
             $this->votesWithDistricts[$electorDistrict] = $districtVotes;
         }
-    }
-
-    /**
-     * @return array
-     */
-    private function resultsWithoutDistrict(): array
-    {
-        $results = [];
-        $nullVotes = 0;
-        $blankVotes = 0;
-        $nbValidVotes = 0;
-        $nbVotes = array_sum($this->votesWithoutDistricts);
-        for ($i = 0; $i < count($this->officialCandidates); $i++) {
-            $index = array_search($this->officialCandidates[$i], $this->candidates);
-            $nbValidVotes += $this->votesWithoutDistricts[$index];
-        }
-        for ($i = 0; $i < count($this->votesWithoutDistricts); $i++) {
-            $candidateResult = ($this->votesWithoutDistricts[$i] * 100) / $nbValidVotes;
-            $candidate = $this->candidates[$i];
-            if (in_array($candidate, $this->officialCandidates)) {
-                $results[$candidate] = number_format($candidateResult, 2, ',', '') . "%";
-            } elseif (empty($this->candidates[$i])) {
-                $blankVotes += $this->votesWithoutDistricts[$i];
-            } else {
-                $nullVotes += $this->votesWithoutDistricts[$i];
-            }
-        }
-
-        $blankResult = ($blankVotes * 100) / $nbVotes;
-        $results["Blank"] = number_format($blankResult, 2, ',', '') . "%";
-
-        $nullResult = ($nullVotes * 100) / $nbVotes;
-        $results["Null"] = number_format($nullResult, 2, ',', '') . "%";
-
-        $nbElectors = array_sum(array_map(fn(array $districtList) => count($districtList), array_values($this->list)));
-        $abstentionResult = 100 - ($nbVotes * 100 / $nbElectors);
-        $results["Abstention"] = number_format($abstentionResult, 2, ',', '') . "%";
-        return $results;
     }
 
     /**
@@ -214,14 +158,4 @@ class Elections implements ElectionsInterface
         $this->votesWithDistricts["District 3"][] = 0;
     }
 
-    /**
-     * @param string $candidate
-     * @return void
-     */
-    private function addCandidateWithoutDistrict(string $candidate): void
-    {
-        $this->officialCandidates[] = $candidate;
-        $this->candidates[] = $candidate;
-        $this->votesWithoutDistricts[] = 0;
-    }
 }
